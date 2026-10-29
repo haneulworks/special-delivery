@@ -179,10 +179,11 @@ button {
 .env-flap {
     z-index: 5;
     inset: 0;
+    border-radius: 9px;
     background: #f8d6de;
     clip-path: polygon(0 0, 100% 0, 50% 56%);
     transform-origin: top center;
-    transition: clip-path .75s cubic-bezier(.22, 1, .36, 1);
+    transition: clip-path .75s cubic-bezier(.22, 2, .36, 2);
     pointer-events: none;
 }
 
