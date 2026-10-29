@@ -11,15 +11,22 @@ const KAKAO_TEMPLATE_ID = 138465;
 const DUE_DATE = Date.UTC(2027, 5, 20);
 
 // ==========================================
-// 2. 이모 / 삼촌 구분
+// 2. 이모 / 삼촌 / 단체 / 기본 구분
 // ==========================================
 
 const params = new URLSearchParams(window.location.search);
-const to = params.get('to') === 'uncle' ? 'uncle' : 'aunt';
-const recipient = to === 'uncle' ? '삼촌' : '이모';
+const to = params.get('to') || '';
 
-document.querySelectorAll('[data-recipient]').forEach((el) => {
-    el.textContent = recipient;
+const greetings = {
+    aunt: '이모, 반가워요! ♥',
+    uncle: '삼촌, 반가워요! ♥',
+    all: '이모, 삼촌 반가워요! ♥'
+};
+
+const greeting = greetings[to] || '반가워요! ♥';
+
+document.querySelectorAll('[data-greeting]').forEach((el) => {
+    el.textContent = greeting;
 });
 
 // ==========================================
