@@ -1,64 +1,82 @@
+
 :root {
     color-scheme: light;
     --ink: #63494b;
     --pink: #efb8c4;
     --rose: #c98596;
-    --cream: #fff8f5
+    --cream: #fff8f5;
 }
 
 * {
-    box-sizing: border-box
+    box-sizing: border-box;
+}
+
+html {
+    -webkit-text-size-adjust: 100%;
 }
 
 body {
     margin: 0;
     min-height: 100vh;
-    font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', system-ui, sans-serif;
+    font-family: 'Apple SD Gothic Neo', 'Malgun Gothic',
+        system-ui, sans-serif;
     color: var(--ink);
-    background: var(--cream)
+    background: var(--cream);
 }
 
 button {
-    font: inherit
+    font: inherit;
 }
 
 .stage {
+    min-height: 100vh;
     min-height: 100svh;
     display: grid;
     place-items: center;
     padding: 32px 18px;
-    background: radial-gradient(circle at 15% 15%, #ffe4e9 0, transparent 42%), radial-gradient(circle at 90% 88%, #fff0d8 0, transparent 40%), var(--cream)
+    background:
+        radial-gradient(circle at 15% 15%, #ffe4e9 0, transparent 42%),
+        radial-gradient(circle at 90% 88%, #fff0d8 0, transparent 40%),
+        var(--cream);
 }
+
+/* =========================================
+   INTRO
+========================================= */
 
 .intro {
     text-align: center;
     width: 100%;
-    max-width: 420px
+    max-width: 420px;
 }
 
 .eyebrow {
     color: #ba8c94;
     font-size: 11px;
     letter-spacing: 2.8px;
-    font-weight: 700
+    font-weight: 700;
 }
 
 .intro h1 {
     margin: 16px 0 8px;
-    font-size: clamp(24px, 6vw, 30px)
+    font-size: clamp(24px, 6vw, 30px);
 }
 
 .intro-sub {
     font-size: 14px;
-    color: #9c777d
+    color: #9c777d;
 }
 
 .hint {
     margin-top: 35px;
     color: #b58291;
     font-size: 14px;
-    animation: bob 1.6s ease-in-out infinite
+    animation: bob 1.6s ease-in-out infinite;
 }
+
+/* =========================================
+   ENVELOPE
+========================================= */
 
 .envelope {
     position: relative;
@@ -66,17 +84,24 @@ button {
     width: min(80vw, 310px);
     height: 210px;
     margin: 65px auto 0;
+    padding: 0;
     border: 0;
     background: transparent;
     cursor: pointer;
+    overflow: visible;
+    isolation: isolate;
     filter: drop-shadow(0 17px 17px #ba8c9655);
-    perspective: 800px
+    -webkit-tap-highlight-color: transparent;
+}
+
+.envelope:disabled {
+    cursor: default;
 }
 
 .envelope:focus-visible,
-.share-button:focus-visible {
+#kakaotalk-sharing-btn:focus-visible {
     outline: 3px solid #ad7289;
-    outline-offset: 7px
+    outline-offset: 7px;
 }
 
 .env-back,
@@ -84,55 +109,86 @@ button {
 .env-flap,
 .env-letter,
 .seal {
-    position: absolute
+    position: absolute;
 }
 
+/* 봉투 뒷면 */
 .env-back {
+    z-index: 1;
     inset: 0;
     background: #e9abb9;
-    border-radius: 9px
+    border-radius: 9px;
 }
 
+/* 열린 봉투의 위쪽 삼각형 */
+.env-back::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: calc(100% - 1px);
+    width: 100%;
+    height: 56%;
+    background: #f8d6de;
+    clip-path: polygon(0 100%, 50% 0, 100% 100%);
+    opacity: 0;
+    transform: translateY(30px);
+    transition:
+        opacity .3s ease,
+        transform .75s cubic-bezier(.22, 1, .36, 1);
+}
+
+/* 편지지 */
 .env-letter {
-    z-index: 1;
+    z-index: 3;
     top: 10%;
     left: 10%;
     width: 80%;
     height: 78%;
-    background: #fffefa;
-    border-radius: 7px;
     display: grid;
     place-items: center;
+    background: #fffefa;
+    border-radius: 7px;
     color: #bb8190;
     font-family: Georgia, serif;
     font-style: italic;
     font-size: 22px;
-    transition: transform .9s cubic-bezier(.22, .68, .22, 1);
+    box-shadow: 0 2px 8px #9c777d18;
+
+    transform: translate3d(0, 0, 0);
+    transition: transform 1.2s cubic-bezier(.22, 1, .36, 1);
     will-change: transform;
-    backface-visibility: hidden
 }
 
+/* 봉투 앞면 */
 .env-front {
-    z-index: 3;
+    z-index: 4;
     inset: 0;
     background: #efb8c4;
-    clip-path: polygon(0 0, 50% 55%, 100% 0, 100% 100%, 0 100%);
-    border-radius: 9px
+    clip-path: polygon(
+        0 0,
+        50% 55%,
+        100% 0,
+        100% 100%,
+        0 100%
+    );
+    border-radius: 9px;
+    pointer-events: none;
 }
 
+/* 닫힌 봉투의 삼각형 덮개 */
 .env-flap {
-    z-index: 4;
+    z-index: 5;
     inset: 0;
     background: #f8d6de;
     clip-path: polygon(0 0, 100% 0, 50% 56%);
-    transform-origin: top;
-    transition: transform .65s cubic-bezier(.3, .1, .2, 1);
-    backface-visibility: hidden;
-    will-change: transform
+    transform-origin: top center;
+    transition: clip-path .75s cubic-bezier(.22, 1, .36, 1);
+    pointer-events: none;
 }
 
+/* 하트 씰 */
 .seal {
-    z-index: 5;
+    z-index: 6;
     left: 50%;
     top: 48%;
     transform: translate(-50%, -50%);
@@ -144,24 +200,44 @@ button {
     background: #fff7f4;
     color: #d7879a;
     font-size: 26px;
-    transition: opacity .2s
+    transition:
+        opacity .25s ease,
+        transform .35s ease;
 }
 
-.opening .env-flap {
-    transform: rotateX(180deg)
+/* =========================================
+   ENVELOPE ANIMATION
+========================================= */
+
+/* STEP 1. 봉투 덮개 열기 */
+.envelope.opening .env-flap {
+    clip-path: polygon(0 0, 100% 0, 50% 0);
 }
 
-.flap-open .env-flap {
-    z-index: 0
+.envelope.opening .env-back::before {
+    opacity: 1;
+    transform: translateY(0);
 }
 
-.letter-out .env-letter {
-    transform: translate3d(0, -125px, 0)
+.envelope.opening .seal {
+    opacity: 0;
+    transform: translate(-50%, -65%) scale(.8);
 }
 
-.opening .seal {
-    opacity: 0
+/* STEP 2. 열린 상태에서 편지지 꺼내기 */
+.envelope.letter-out .env-letter {
+    transform: translate3d(0, -125px, 0);
 }
+
+/* 열린 봉투 덮개 유지 */
+.envelope.letter-out .env-back::before {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* =========================================
+   ANNOUNCEMENT CARD
+========================================= */
 
 .card {
     width: min(100%, 400px);
@@ -171,14 +247,17 @@ button {
     background: #fffefa;
     text-align: center;
     box-shadow: 0 20px 60px #b77e8c22;
+
     opacity: 0;
     transform: translateY(24px) scale(.97);
-    transition: opacity .7s ease, transform .7s ease
+    transition:
+        opacity .7s ease,
+        transform .7s ease;
 }
 
 .card.visible {
     opacity: 1;
-    transform: none
+    transform: none;
 }
 
 .photo-frame {
@@ -186,21 +265,21 @@ button {
     border: 7px solid #fff;
     box-shadow: 0 6px 20px #493a3a18;
     border-radius: 12px;
-    overflow: hidden
+    overflow: hidden;
 }
 
 .ultrasound {
     display: block;
     width: 100%;
-    aspect-ratio: 5/3;
+    aspect-ratio: 5 / 3;
     object-fit: cover;
-    object-position: center 20%
+    object-position: center 20%;
 }
 
 .card h2 {
     margin: 24px 0 0;
     font-size: clamp(24px, 7vw, 30px);
-    letter-spacing: -1px
+    letter-spacing: -1px;
 }
 
 .sheep {
@@ -208,101 +287,113 @@ button {
     width: 185px;
     max-width: 75%;
     height: auto;
-    margin: 7px auto 0
+    margin: 7px auto 0;
 }
 
 .baby-name {
     margin: 0;
-    font-size: 19px
+    font-size: 19px;
 }
 
 .baby-name strong {
-    color: #c77f91
+    color: #c77f91;
 }
 
 .due-date {
     font-size: 15px;
     color: #a87b86;
-    margin: 12px 0 20px
+    margin: 12px 0 20px;
 }
 
 .dday-box {
     padding: 19px;
     border-radius: 16px;
-    background: #fff0f2
+    background: #fff0f2;
 }
 
 .dday-box p {
     margin: 0 0 6px;
     font-size: 13px;
-    color: #a57983
+    color: #a57983;
 }
 
 .dday-box strong {
     font-size: 34px;
     color: #bd7489;
     letter-spacing: 1px;
-    font-variant-numeric: tabular-nums
+    font-variant-numeric: tabular-nums;
 }
 
 .signoff {
     font-size: 13px;
     color: #b38b94;
-    margin: 17px 0 22px
+    margin: 17px 0 22px;
 }
 
-.share-button {
+/* =========================================
+   KAKAO SHARE
+========================================= */
+
+#kakaotalk-sharing-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 14px 20px;
     border: 0;
     border-radius: 12px;
-    padding: 13px 20px;
-    width: 100%;
     background: #fee500;
-    color: #342c1a;
+    color: #191919;
+    font-size: 15px;
     font-weight: 700;
-    cursor: pointer
+    cursor: pointer;
+    transition:
+        background-color .2s ease,
+        transform .2s ease;
+}
+
+#kakaotalk-sharing-btn img {
+    display: block;
+    width: 22px;
+    height: 22px;
+    object-fit: contain;
+}
+
+#kakaotalk-sharing-btn:hover {
+    background: #f5dc00;
+}
+
+#kakaotalk-sharing-btn:active {
+    transform: scale(.98);
 }
 
 .share-status {
     font-size: 12px;
     color: #8e6d76;
     min-height: 1em;
-    margin: 9px 0 0
-}
-
-#kakaotalk-sharing-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 48px;
-    height: 48px;
-    border: 0;
-    border-radius: 50%;
-    background: none;
-    font-size: 0;
-    opacity: 0;
-}
-
-#kakaotalk-sharing-btn img {
-    display: block;
-    width: 48px;
+    margin: 9px 0 0;
 }
 
 [hidden] {
-    display: none !important
+    display: none !important;
 }
+
+/* =========================================
+   ANIMATIONS
+========================================= */
 
 @keyframes bob {
     50% {
-        transform: translateY(-6px)
+        transform: translateY(-6px);
     }
 }
 
-@media(prefers-reduced-motion:reduce) {
-
+@media (prefers-reduced-motion: reduce) {
     *,
-    *:before,
-    *:after {
+    *::before,
+    *::after {
         animation: none !important;
-        transition: none !important
+        transition: none !important;
     }
 }

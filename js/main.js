@@ -8,7 +8,7 @@
 const BASE_URL = 'https://haneulworks.github.io/special-delivery/';
 const KAKAO_JAVASCRIPT_KEY = 'f6f04b66664ff3dccd99214875b0c02d';
 const KAKAO_TEMPLATE_ID = 1384665;
-const DUE_DATE = Date.UTC(2027, 5, 20); // 2027-06-20
+const DUE_DATE = Date.UTC(2027, 5, 20);
 
 // ==========================================
 // 2. 이모 / 삼촌 구분
@@ -23,7 +23,7 @@ document.querySelectorAll('[data-recipient]').forEach((el) => {
 });
 
 // ==========================================
-// 3. 축복이 D-DAY 계산
+// 3. D-DAY 계산
 // ==========================================
 
 function koreaTodayUTC() {
@@ -54,24 +54,25 @@ function updateDday() {
         diff === 0 ? 'D-DAY' :
         `D+${Math.abs(diff)}`;
 
-    const ddayElement = document.getElementById('dday-count');
+    const element = document.getElementById('dday-count');
 
-    if (ddayElement) {
-        ddayElement.textContent = ddayText;
+    if (element) {
+        element.textContent = ddayText;
     }
 }
 
 updateDday();
 
-// 페이지에 다시 돌아왔을 때 D-DAY 갱신
 window.addEventListener('focus', updateDday);
 
 document.addEventListener('visibilitychange', () => {
-    if (!document.hidden) updateDday();
+    if (!document.hidden) {
+        updateDday();
+    }
 });
 
 // ==========================================
-// 4. 편지 봉투 열기 애니메이션
+// 4. 편지 봉투 애니메이션
 // ==========================================
 
 const intro = document.getElementById('intro');
@@ -98,22 +99,15 @@ if (intro && envelope && card) {
             return;
         }
 
-        // STEP 1. 봉투 덮개 열기
+        // STEP 1. 봉투 열기
         envelope.classList.add('opening');
 
+        // STEP 2. 열린 봉투에서 편지지 올라오기
         window.setTimeout(() => {
-            // STEP 2. 덮개가 열린 뒤 레이어 변경
-            envelope.classList.add('flap-open');
+            envelope.classList.add('letter-out');
+        }, 850);
 
-            // STEP 3. 편지지 올라오기
-            requestAnimationFrame(() => {
-                requestAnimationFrame(() => {
-                    envelope.classList.add('letter-out');
-                });
-            });
-        }, 680);
-
-        // STEP 4. 임밍아웃 카드 공개
+        // STEP 3. 임밍아웃 카드 공개
         window.setTimeout(() => {
             intro.hidden = true;
             card.hidden = false;
@@ -124,21 +118,18 @@ if (intro && envelope && card) {
                 });
             });
 
-            window.scrollTo({
-                top: 0,
-                behavior: 'instant'
-            });
-        }, 1750);
+            window.scrollTo(0, 0);
+        }, 2300);
     });
 }
 
 // ==========================================
-// 5. 카카오톡 SDK 초기화
+// 5. 카카오 SDK 초기화
 // ==========================================
 
 function initKakao() {
     if (!window.Kakao) {
-        console.warn('카카오 SDK를 불러오지 못했습니다.');
+        console.warn('카카오 SDK 로드 실패');
         return false;
     }
 
@@ -149,31 +140,25 @@ function initKakao() {
 
         return Kakao.isInitialized();
     } catch (error) {
-        console.error('카카오 SDK 초기화 오류:', error);
+        console.error('카카오 초기화 오류:', error);
         return false;
     }
 }
 
 // ==========================================
-// 6. 카카오톡 공유하기
+// 6. 카카오톡 공유
 // ==========================================
 
-const shareButton =
-    document.getElementById('kakaotalk-sharing-btn') ||
-    document.getElementById('share-kakao');
-
+const shareButton = document.getElementById('kakaotalk-sharing-btn');
 const shareStatus = document.getElementById('share-status');
-
 const targetUrl = `${BASE_URL}?to=${to}`;
 
-// 공유 링크 복사
 async function copyShareLink() {
     try {
         await navigator.clipboard.writeText(targetUrl);
 
         if (shareStatus) {
-            shareStatus.textContent =
-                '공유 링크를 복사했어요! 카카오톡에 붙여넣어 주세요.';
+            shareStatus.textContent = '공유 링크를 복사했어요!';
         } else {
             alert('공유 링크를 복사했어요!');
         }
@@ -182,15 +167,11 @@ async function copyShareLink() {
             shareStatus.textContent =
                 `이 주소를 공유해 주세요: ${targetUrl}`;
         } else {
-            window.prompt(
-                '공유할 주소를 복사해 주세요.',
-                targetUrl
-            );
+            window.prompt('공유할 주소를 복사해 주세요.', targetUrl);
         }
     }
 }
 
-// 카카오톡 공유 실행
 function shareKakao() {
     if (!initKakao() || !window.Kakao.Share) {
         copyShareLink();
@@ -206,12 +187,11 @@ function shareKakao() {
             }
         });
     } catch (error) {
-        console.error('카카오톡 공유 오류:', error);
+        console.error('카카오 공유 오류:', error);
         copyShareLink();
     }
 }
 
-// 버튼 이벤트
 if (shareButton) {
     shareButton.addEventListener('click', shareKakao);
 }
