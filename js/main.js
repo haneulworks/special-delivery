@@ -1,7 +1,7 @@
 'use strict';
 
 const BASE_URL = 'https://haneulworks.github.io/special-delivery/';
-const KAKAO_JAVASCRIPT_KEY = ''; // TODO: 카카오 디벨로퍼스 > 앱 키 > JavaScript 키 입력
+const KAKAO_JAVASCRIPT_KEY = 'f6f04b66664ff3dccd99214875b0c02d'; // TODO: 카카오 디벨로퍼스 > 앱 키 > JavaScript 키 입력
 const DUE_DATE = Date.UTC(2027, 5, 20); // 2027-06-20
 const params = new URLSearchParams(window.location.search);
 const to = params.get('to') === 'uncle' ? 'uncle' : 'aunt';
