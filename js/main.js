@@ -1,75 +1,217 @@
+
 'use strict';
 
+// ==========================================
+// 1. 기본 설정
+// ==========================================
+
 const BASE_URL = 'https://haneulworks.github.io/special-delivery/';
-const KAKAO_JAVASCRIPT_KEY = 'f6f04b66664ff3dccd99214875b0c02d'; // TODO: 카카오 디벨로퍼스 > 앱 키 > JavaScript 키 입력
+const KAKAO_JAVASCRIPT_KEY = 'f6f04b66664ff3dccd99214875b0c02d';
+const KAKAO_TEMPLATE_ID = 1384665;
 const DUE_DATE = Date.UTC(2027, 5, 20); // 2027-06-20
+
+// ==========================================
+// 2. 이모 / 삼촌 구분
+// ==========================================
+
 const params = new URLSearchParams(window.location.search);
 const to = params.get('to') === 'uncle' ? 'uncle' : 'aunt';
 const recipient = to === 'uncle' ? '삼촌' : '이모';
 
 document.querySelectorAll('[data-recipient]').forEach((el) => {
-  el.textContent = recipient;
+    el.textContent = recipient;
 });
 
+// ==========================================
+// 3. 축복이 D-DAY 계산
+// ==========================================
+
 function koreaTodayUTC() {
-  const parts = new Intl.DateTimeFormat('en-US', {
-    timeZone: 'Asia/Seoul', year: 'numeric', month: '2-digit', day: '2-digit'
-  }).formatToParts(new Date());
-  const part = (type) => Number(parts.find((p) => p.type === type).value);
-  return Date.UTC(part('year'), part('month') - 1, part('day'));
+    const parts = new Intl.DateTimeFormat('en-US', {
+        timeZone: 'Asia/Seoul',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+    }).formatToParts(new Date());
+
+    const part = (type) =>
+        Number(parts.find((p) => p.type === type).value);
+
+    return Date.UTC(
+        part('year'),
+        part('month') - 1,
+        part('day')
+    );
 }
+
 function updateDday() {
-  const diff = Math.round((DUE_DATE - koreaTodayUTC()) / 86400000);
-  document.getElementById('dday-count').textContent =
-    diff > 0 ? `D-${diff}` : diff === 0 ? 'D-DAY' : `D+${Math.abs(diff)}`;
+    const diff = Math.round(
+        (DUE_DATE - koreaTodayUTC()) / 86400000
+    );
+
+    const ddayText =
+        diff > 0 ? `D-${diff}` :
+        diff === 0 ? 'D-DAY' :
+        `D+${Math.abs(diff)}`;
+
+    const ddayElement = document.getElementById('dday-count');
+
+    if (ddayElement) {
+        ddayElement.textContent = ddayText;
+    }
 }
+
 updateDday();
-// 탭을 다시 열었을 때 날짜 갱신
+
+// 페이지에 다시 돌아왔을 때 D-DAY 갱신
 window.addEventListener('focus', updateDday);
-document.addEventListener('visibilitychange', () => { if (!document.hidden) updateDday(); });
+
+document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) updateDday();
+});
+
+// ==========================================
+// 4. 편지 봉투 열기 애니메이션
+// ==========================================
 
 const intro = document.getElementById('intro');
 const envelope = document.getElementById('open-envelope');
 const card = document.getElementById('announcement');
-let opened = false;
-envelope.addEventListener('click', () => {
-  if (opened) return;
-  opened = true;
-  envelope.classList.add('opening');
-  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  window.setTimeout(() => {
-    intro.hidden = true;
-    card.hidden = false;
-    requestAnimationFrame(() => card.classList.add('visible'));
-    window.scrollTo({ top: 0, behavior: 'instant' });
-  }, reduced ? 0 : 1250);
-});
 
-const shareButton = document.getElementById('share-kakao');
-const shareStatus = document.getElementById('share-status');
-const targetUrl = `${BASE_URL}?to=${to}`;
-shareButton.addEventListener('click', async () => {
-  if (KAKAO_JAVASCRIPT_KEY && window.Kakao && window.Kakao.Share) {
+let opened = false;
+
+if (intro && envelope && card) {
+    envelope.addEventListener('click', () => {
+        if (opened) return;
+
+        opened = true;
+        envelope.disabled = true;
+
+        const reduced = window.matchMedia(
+            '(prefers-reduced-motion: reduce)'
+        ).matches;
+
+        if (reduced) {
+            intro.hidden = true;
+            card.hidden = false;
+            card.classList.add('visible');
+            return;
+        }
+
+        // STEP 1. 봉투 덮개 열기
+        envelope.classList.add('opening');
+
+        window.setTimeout(() => {
+            // STEP 2. 덮개가 열린 뒤 레이어 변경
+            envelope.classList.add('flap-open');
+
+            // STEP 3. 편지지 올라오기
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    envelope.classList.add('letter-out');
+                });
+            });
+        }, 680);
+
+        // STEP 4. 임밍아웃 카드 공개
+        window.setTimeout(() => {
+            intro.hidden = true;
+            card.hidden = false;
+
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    card.classList.add('visible');
+                });
+            });
+
+            window.scrollTo({
+                top: 0,
+                behavior: 'instant'
+            });
+        }, 1750);
+    });
+}
+
+// ==========================================
+// 5. 카카오톡 SDK 초기화
+// ==========================================
+
+function initKakao() {
+    if (!window.Kakao) {
+        console.warn('카카오 SDK를 불러오지 못했습니다.');
+        return false;
+    }
+
     try {
-      if (!window.Kakao.isInitialized()) window.Kakao.init(KAKAO_JAVASCRIPT_KEY);
-      window.Kakao.Share.sendDefault({
-        objectType: 'feed',
-        content: {
-          title: '선물이 도착했어요 💌',
-          description: '당신에게 도착한 특별한 편지, 지금 열어보세요 ♡',
-          imageUrl: `${BASE_URL}images/og-image.png`,
-          link: { mobileWebUrl: targetUrl, webUrl: targetUrl }
-        },
-        buttons: [{ title: '선물 열어보기 🎁', link: { mobileWebUrl: targetUrl, webUrl: targetUrl } }]
-      });
-      return;
-    } catch (err) { console.error('카카오 공유 오류', err); }
-  }
-  // 키 미설정 또는 SDK 오류 시 공유 링크 복사로 대체
-  try {
-    await navigator.clipboard.writeText(targetUrl);
-    shareStatus.textContent = '공유 링크를 복사했어요! 카카오톡에 붙여넣어 주세요.';
-  } catch {
-    shareStatus.textContent = `이 주소를 공유해 주세요: ${targetUrl}`;
-  }
-});
+        if (!Kakao.isInitialized()) {
+            Kakao.init(KAKAO_JAVASCRIPT_KEY);
+        }
+
+        return Kakao.isInitialized();
+    } catch (error) {
+        console.error('카카오 SDK 초기화 오류:', error);
+        return false;
+    }
+}
+
+// ==========================================
+// 6. 카카오톡 공유하기
+// ==========================================
+
+const shareButton =
+    document.getElementById('kakaotalk-sharing-btn') ||
+    document.getElementById('share-kakao');
+
+const shareStatus = document.getElementById('share-status');
+
+const targetUrl = `${BASE_URL}?to=${to}`;
+
+// 공유 링크 복사
+async function copyShareLink() {
+    try {
+        await navigator.clipboard.writeText(targetUrl);
+
+        if (shareStatus) {
+            shareStatus.textContent =
+                '공유 링크를 복사했어요! 카카오톡에 붙여넣어 주세요.';
+        } else {
+            alert('공유 링크를 복사했어요!');
+        }
+    } catch (error) {
+        if (shareStatus) {
+            shareStatus.textContent =
+                `이 주소를 공유해 주세요: ${targetUrl}`;
+        } else {
+            window.prompt(
+                '공유할 주소를 복사해 주세요.',
+                targetUrl
+            );
+        }
+    }
+}
+
+// 카카오톡 공유 실행
+function shareKakao() {
+    if (!initKakao() || !window.Kakao.Share) {
+        copyShareLink();
+        return;
+    }
+
+    try {
+        Kakao.Share.sendCustom({
+            templateId: KAKAO_TEMPLATE_ID,
+            templateArgs: {
+                RECIPIENT: to,
+                FW: '특별한 선물'
+            }
+        });
+    } catch (error) {
+        console.error('카카오톡 공유 오류:', error);
+        copyShareLink();
+    }
+}
+
+// 버튼 이벤트
+if (shareButton) {
+    shareButton.addEventListener('click', shareKakao);
+}

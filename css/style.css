@@ -10,16 +10,10 @@
     box-sizing: border-box
 }
 
-.jua-regular {
-  font-family: "Jua", sans-serif;
-  font-weight: 400;
-  font-style: normal;
-}
-
 body {
     margin: 0;
     min-height: 100vh;
-    font-family: 'Jua', system-ui, sans-serif;
+    font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', system-ui, sans-serif;
     color: var(--ink);
     background: var(--cream)
 }
@@ -113,7 +107,9 @@ button {
     font-family: Georgia, serif;
     font-style: italic;
     font-size: 22px;
-    transition: transform 1s ease
+    transition: transform .9s cubic-bezier(.22, .68, .22, 1);
+    will-change: transform;
+    backface-visibility: hidden
 }
 
 .env-front {
@@ -130,8 +126,9 @@ button {
     background: #f8d6de;
     clip-path: polygon(0 0, 100% 0, 50% 56%);
     transform-origin: top;
-    transition: transform .8s ease;
-    backface-visibility: hidden
+    transition: transform .65s cubic-bezier(.3, .1, .2, 1);
+    backface-visibility: hidden;
+    will-change: transform
 }
 
 .seal {
@@ -151,12 +148,15 @@ button {
 }
 
 .opening .env-flap {
-    transform: rotateX(180deg);
+    transform: rotateX(180deg)
+}
+
+.flap-open .env-flap {
     z-index: 0
 }
 
-.opening .env-letter {
-    transform: translateY(-120px)
+.letter-out .env-letter {
+    transform: translate3d(0, -125px, 0)
 }
 
 .opening .seal {
