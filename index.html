@@ -95,7 +95,7 @@
 
             <p class="signoff">조금만 기다려 주세요 ♡</p>
 
-            <button type="button" id="kakaotalk-sharing-btn" aria-label="카카오톡으로 공유" onclick="shareMessage()">
+            <button type="button" id="kakaotalk-sharing-btn" aria-label="카카오톡으로 공유">
                 <img src="./images/icon-kakao.png" alt="">
                 <span>카카오톡으로 공유</span>
             </button>
@@ -109,19 +109,16 @@
 <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.8.4/kakao.min.js" integrity="sha384-BGX7Wb16GmRFagri4bLJV2DgipVZaU2AI812GZtHtHzzDQJnfHasDXN5houxv45w" crossorigin="anonymous"></script>
 
 <script>
-      //JavaScript SDK 초기화 함수
-      Kakao.init("f6f04b66664ff3dccd99214875b0c02d")
-      function shareMessage() {
-        //카카오톡 공유 대상 선택 화면을 표시하는 함수
-        Kakao.Share.sendCustom({
-          // 메시지 템플릿 ID
-          templateId: 138465,
-          // 사용자 인자
-          templateArgs: {
-            NAME: "이하늘",
-          },
-        })
-      }
+    //JavaScript SDK 초기화 함수
+    Kakao.init("f6f04b66664ff3dccd99214875b0c02d")
+    Kakao.Share.createCustomButton({
+        // 카카오톡 공유 버튼 표준 이미지를 클릭 동작으로 연결
+        container: "#kakaotalk-share-btn",
+        templateId: 138465,
+        templateArgs: {
+        NAME: "이하늘",
+        },
+    })
     </script>
 
 </html>
