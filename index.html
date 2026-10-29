@@ -44,9 +44,24 @@
             <p class="due-date">2027년 6월 20일에 만나요 ♡</p>
             <div class="dday-box" aria-live="polite"><p>축복이를 만나는 날까지</p><strong id="dday-count">D-</strong></div>
             <p class="signoff">조금만 기다려 주세요 ♡</p>
-            <button class="share-button" id="share-kakao" type="button">카카오톡으로 편지 공유하기 <span aria-hidden="true">↗</span></button>
-            <p class="share-status" id="share-status" role="status"></p>
+            <button type="button" id="kakaotalk-sharing-btn"><img src="./images/icon-kakao.png" alt="카카오톡 아이콘" />카카오톡으로 공유</button>
         </section>
     </main>
 </body>
+<script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.7/kakao.min.js" integrity="sha384-tJkjbtDbvoxO+diRuDtwRO9JXR7pjWnfjfRn5ePUpl7e7RJCxKCwwnfqUAdXh53p" crossorigin="anonymous"></script>
+
+<script>
+  Kakao.init('f6f04b66664ff3dccd99214875b0c02d');  // 사용하려는 앱의 JavaScript 키 입력
+</script>
+
+<script>
+	document.getElementById('kakaotalk-sharing-btn').addEventListener('click', function () {
+		Kakao.Share.sendCustom({
+			templateId: 1384665, // 숫자만 입력
+			templateArgs: {
+				FW: "특별한 선물",
+			}
+		});
+	});
+</script>
 </html>
