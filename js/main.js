@@ -8,7 +8,7 @@
 const BASE_URL = 'https://haneulworks.github.io/special-delivery/';
 const KAKAO_JAVASCRIPT_KEY = 'f6f04b66664ff3dccd99214875b0c02d';
 const KAKAO_TEMPLATE_ID = 138465;
-const DUE_DATE = Date.UTC(2027, 5, 20);
+const DUE_DATE = Date.UTC(2027, 5, 27);
 
 // ==========================================
 // 2. 이모 / 삼촌 / 단체 / 기본 구분
