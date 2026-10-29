@@ -95,7 +95,7 @@
 
             <p class="signoff">조금만 기다려 주세요 ♡</p>
 
-            <button type="button" id="kakaotalk-sharing-btn" aria-label="카카오톡으로 공유">
+            <button type="button" id="kakaotalk-sharing-btn" aria-label="카카오톡으로 공유" onclick="shareMessage()">
                 <img src="./images/icon-kakao.png" alt="">
                 <span>카카오톡으로 공유</span>
             </button>
@@ -106,21 +106,22 @@
     </main>
 </body>
 
-<script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.7/kakao.min.js" integrity="sha384-tJkjbtDbvoxO+diRuDtwRO9JXR7pjWnfjfRn5ePUpl7e7RJCxKCwwnfqUAdXh53p" crossorigin="anonymous"></script>
+<script src="https://t1.kakaocdn.net/kakao_js_sdk/2.8.4/kakao.min.js" integrity="sha384-BGX7Wb16GmRFagri4bLJV2DgipVZaU2AI812GZtHtHzzDQJnfHasDXN5houxv45w" crossorigin="anonymous"></script>
 
 <script>
-  Kakao.init('f6f04b66664ff3dccd99214875b0c02d');  // 사용하려는 앱의 JavaScript 키 입력
-</script>
-
-<script>
-	document.getElementById('kakaotalk-sharing-btn').addEventListener('click', function () {
-		Kakao.Share.sendCustom({
-			templateId: 138465, // 숫자만 입력
-			templateArgs: {
-				FW: "특별한 선물",
-			}
-		});
-	});
-</script>
+      //JavaScript SDK 초기화 함수
+      Kakao.init("f6f04b66664ff3dccd99214875b0c02d")
+      function shareMessage() {
+        //카카오톡 공유 대상 선택 화면을 표시하는 함수
+        Kakao.Share.sendCustom({
+          // 메시지 템플릿 ID
+          templateId: 138465,
+          // 사용자 인자
+          templateArgs: {
+            NAME: "이하늘",
+          },
+        })
+      }
+    </script>
 
 </html>
