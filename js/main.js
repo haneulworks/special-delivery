@@ -123,13 +123,14 @@ if (intro && envelope && card) {
     });
 }
 
-// ==========================================
-// 5. 카카오 SDK 초기화
-// ==========================================
+
+/* ==========================================
+   5. 카카오 SDK 초기화
+========================================== */
 
 function initKakao() {
     if (!window.Kakao) {
-        console.warn('카카오 SDK 로드 실패');
+        console.error('카카오 SDK를 불러오지 못했습니다.');
         return false;
     }
 
@@ -140,41 +141,20 @@ function initKakao() {
 
         return Kakao.isInitialized();
     } catch (error) {
-        console.error('카카오 초기화 오류:', error);
+        console.error('카카오 SDK 초기화 오류:', error);
         return false;
     }
 }
 
-// ==========================================
-// 6. 카카오톡 공유
-// ==========================================
+/* ==========================================
+   6. 카카오톡 공유하기
+========================================== */
 
 const shareButton = document.getElementById('kakaotalk-sharing-btn');
-const shareStatus = document.getElementById('share-status');
-const targetUrl = `${BASE_URL}?to=${to}`;
-
-async function copyShareLink() {
-    try {
-        await navigator.clipboard.writeText(targetUrl);
-
-        if (shareStatus) {
-            shareStatus.textContent = '공유 링크를 복사했어요!';
-        } else {
-            alert('공유 링크를 복사했어요!');
-        }
-    } catch (error) {
-        if (shareStatus) {
-            shareStatus.textContent =
-                `이 주소를 공유해 주세요: ${targetUrl}`;
-        } else {
-            window.prompt('공유할 주소를 복사해 주세요.', targetUrl);
-        }
-    }
-}
 
 function shareKakao() {
     if (!initKakao() || !window.Kakao.Share) {
-        copyShareLink();
+        alert('카카오톡 공유 기능을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.');
         return;
     }
 
@@ -187,8 +167,8 @@ function shareKakao() {
             }
         });
     } catch (error) {
-        console.error('카카오 공유 오류:', error);
-        copyShareLink();
+        console.error('카카오톡 공유 오류:', error);
+        alert('카카오톡 공유 중 오류가 발생했습니다.');
     }
 }
 
