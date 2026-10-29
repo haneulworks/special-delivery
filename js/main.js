@@ -7,7 +7,7 @@
 
 const BASE_URL = 'https://haneulworks.github.io/special-delivery/';
 const KAKAO_JAVASCRIPT_KEY = 'f6f04b66664ff3dccd99214875b0c02d';
-const KAKAO_TEMPLATE_ID = 1384665;
+const KAKAO_TEMPLATE_ID = 138465;
 const DUE_DATE = Date.UTC(2027, 5, 20);
 
 // ==========================================
